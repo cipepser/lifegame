@@ -2,15 +2,17 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"os/exec"
 	"time"
 )
 
 type game struct {
-	width  int
-	height int
-	cells  [][]bool
+	width      int
+	height     int
+	cells      [][]bool
+	generation int
 }
 
 func newCells(width, height int) [][]bool {
@@ -24,16 +26,26 @@ func newCells(width, height int) [][]bool {
 
 func New(width, height int) *game {
 	g := &game{
-		width:  width,
-		height: height,
-		cells:  newCells(width, height),
+		width:      width,
+		height:     height,
+		cells:      newCells(width, height),
+		generation: 0,
 	}
 	return g
 }
 
 // TODO: implement
 func (g *game) initialize() {
+	rand.Seed(time.Now().UnixNano())
 
+	for i := 1; i < g.height-1; i++ {
+		for j := 1; j < g.width-1; j++ {
+			if rand.Int()%2 == 0 {
+				g.cells[i][j] = true
+			}
+		}
+		fmt.Println("")
+	}
 }
 
 func clear() {
@@ -56,6 +68,7 @@ func (g *game) showCells() {
 		}
 		fmt.Println("")
 	}
+	fmt.Println("generation: ", g.generation)
 }
 
 func (g *game) update() {
@@ -76,6 +89,7 @@ func (g *game) update() {
 	}
 
 	g.cells = newCell
+	g.generation++
 }
 
 func (g *game) countLivingNeighbours(i, j int) int {
@@ -85,7 +99,7 @@ func (g *game) countLivingNeighbours(i, j int) int {
 			if k == 0 && l == 0 {
 				continue
 			}
-			if g.cells[k][l] {
+			if g.cells[i+k][j+l] {
 				cnt++
 			}
 		}
@@ -100,6 +114,6 @@ func main() {
 	for {
 		g.showCells()
 		g.update()
-		time.Sleep(1 * time.Second)
+		time.Sleep(200 * time.Millisecond)
 	}
 }
