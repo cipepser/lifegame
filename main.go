@@ -34,7 +34,6 @@ func New(width, height int) *game {
 	return g
 }
 
-// TODO: implement
 func (g *game) initialize() {
 	rand.Seed(time.Now().UnixNano())
 
